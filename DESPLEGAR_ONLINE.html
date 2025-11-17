@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Converter - Desplegar en la Nube</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .platform {
+            background: #f8f9fa;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .platform:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .platform h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .badge.recommended {
+            background: #68d391;
+            color: white;
+        }
+
+        .badge.free {
+            background: #4299e1;
+            color: white;
+        }
+
+        .steps {
+            margin: 20px 0;
+        }
+
+        .step {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .step strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px 10px 10px 0;
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .button.secondary {
+            background: #4299e1;
+        }
+
+        .button.secondary:hover {
+            background: #3182ce;
+        }
+
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+
+        .warning {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #f0fff4;
+            border-left: 4px solid #68d391;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .info {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .pros, .cons {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .pros {
+            background: #f0fff4;
+            border: 1px solid #68d391;
+        }
+
+        .cons {
+            background: #fffaf0;
+            border: 1px solid #f6ad55;
+        }
+
+        .pros h4, .cons h4 {
+            margin-bottom: 10px;
+        }
+
+        .pros h4 {
+            color: #2f855a;
+        }
+
+        .cons h4 {
+            color: #c05621;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .comparison {
+            overflow-x: auto;
+            margin: 30px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .checkmark {
+            color: #68d391;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .crossmark {
+            color: #fc8181;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☁️ Budget Converter Online</h1>
+            <p>Despliega tu aplicación en la nube SIN instalar nada</p>
+        </div>
+
+        <div class="content">
+            <div class="info">
+                <strong>🎯 ¿Qué vamos a hacer?</strong>
+                <p>Vamos a desplegar tu aplicación en servicios en la nube GRATUITOS que se conectan directamente con tu repositorio de GitHub. Todo funciona online, sin necesidad de instalar Python, Node.js ni nada en tu computadora.</p>
+            </div>
+
+            <h2 style="text-align: center; margin: 40px 0 30px 0;">Elige tu Plataforma</h2>
+
+            <!-- Railway -->
+            <div class="platform">
+                <h2>
+                    🚂 Railway
+                    <span class="badge recommended">RECOMENDADO</span>
+                    <span class="badge free">GRATIS</span>
+                </h2>
+
+                <p><strong>La opción más fácil y completa para tu aplicación fullstack.</strong></p>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Ventajas</h4>
+                        <ul>
+                            <li>Despliegue automático desde GitHub</li>
+                            <li>Backend + Frontend en un solo lugar</li>
+                            <li>$5 de crédito gratis al mes</li>
+                            <li>Muy fácil de configurar</li>
+                            <li>Variables de entorno sencillas</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>⚠️ Limitaciones</h4>
+                        <ul>
+                            <li>Requiere tarjeta de crédito (no cobra)</li>
+                            <li>$5/mes después del trial</li>
+                            <li>Se duerme después de inactividad</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <strong>Paso 1:</strong> Ve a Railway y regístrate con GitHub
+                        <div style="margin-top: 10px;">
+                            <a href="https://railway.app/" target="_blank" class="button">🚀 Ir a Railway</a>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 2:</strong> Haz clic en "New Project" → "Deploy from GitHub repo"
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 3:</strong> Selecciona tu repositorio:
+                        <div class="code">manoloaliaga1977-cell/BuildGets-Revisi-n</div>
+                        Y la rama:
+                        <div class="code">claude/budget-import-export-app-018MrqiAfdsFifaz42UUDLVR</div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 4:</strong> Railway detectará automáticamente Python y Node.js. Configura las variables de entorno:
+                        <div class="code">ANTHROPIC_API_KEY=tu_clave_aqui</div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 5:</strong> ¡Listo! Railway generará una URL pública como:
+                        <div class="code">https://tu-app.up.railway.app</div>
+                    </div>
+                </div>
+
+                <div class="success">
+                    <strong>✅ Resultado:</strong> Tu aplicación funcionando en internet, accesible desde cualquier navegador, sin instalar nada en tu computadora.
+                </div>
+            </div>
+
+            <!-- Render -->
+            <div class="platform">
+                <h2>
+                    🎨 Render
+                    <span class="badge free">GRATIS</span>
+                </h2>
+
+                <p><strong>Alternativa gratuita sin necesidad de tarjeta de crédito.</strong></p>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Ventajas</h4>
+                        <ul>
+                            <li>100% gratis (sin tarjeta)</li>
+                            <li>Despliegue desde GitHub</li>
+                            <li>SSL automático</li>
+                            <li>Buena documentación</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>⚠️ Limitaciones</h4>
+                        <ul>
+                            <li>Plan gratis se duerme después de 15 min</li>
+                            <li>Arranque lento (30-60 segundos)</li>
+                            <li>Menos recursos que Railway</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <strong>Paso 1:</strong> Regístrate en Render con GitHub
+                        <div style="margin-top: 10px;">
+                            <a href="https://render.com/" target="_blank" class="button secondary">🎨 Ir a Render</a>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 2:</strong> Crea un "Web Service" y conecta tu repositorio de GitHub
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 3:</strong> Configura el backend:
+                        <ul>
+                            <li>Root Directory: <code>backend</code></li>
+                            <li>Build Command: <code>pip install -r requirements.txt</code></li>
+                            <li>Start Command: <code>uvicorn app.main:app --host 0.0.0.0 --port $PORT</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 4:</strong> Añade variable de entorno:
+                        <div class="code">ANTHROPIC_API_KEY=tu_clave_aqui</div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 5:</strong> Repite para el frontend (si quieres) o usa el backend solo para la API
+                    </div>
+                </div>
+            </div>
+
+            <!-- Replit -->
+            <div class="platform">
+                <h2>
+                    ⚡ Replit
+                    <span class="badge free">GRATIS</span>
+                </h2>
+
+                <p><strong>Ejecuta código directamente en el navegador, sin desplegar.</strong></p>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Ventajas</h4>
+                        <ul>
+                            <li>Editor de código en el navegador</li>
+                            <li>No requiere instalación local</li>
+                            <li>Gratis sin tarjeta</li>
+                            <li>Perfecto para desarrollo</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>⚠️ Limitaciones</h4>
+                        <ul>
+                            <li>Se apaga cuando cierras el navegador</li>
+                            <li>No es para producción</li>
+                            <li>Recursos limitados</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <strong>Paso 1:</strong> Ve a Replit
+                        <div style="margin-top: 10px;">
+                            <a href="https://replit.com/" target="_blank" class="button secondary">⚡ Ir a Replit</a>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 2:</strong> Crea un nuevo Repl desde GitHub:
+                        <ul>
+                            <li>Clic en "Create Repl"</li>
+                            <li>Selecciona "Import from GitHub"</li>
+                            <li>Pega la URL de tu repo</li>
+                        </ul>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 3:</strong> Replit detectará automáticamente Python y empezará a funcionar
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 4:</strong> Añade tu API key en "Secrets" (candado):
+                        <div class="code">ANTHROPIC_API_KEY=tu_clave_aqui</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparación -->
+            <h2 style="text-align: center; margin: 40px 0 30px 0;">Comparación Rápida</h2>
+
+            <div class="comparison">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Railway</th>
+                            <th>Render</th>
+                            <th>Replit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Precio</td>
+                            <td>$5 gratis/mes</td>
+                            <td>100% gratis</td>
+                            <td>Gratis</td>
+                        </tr>
+                        <tr>
+                            <td>Tarjeta requerida</td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="crossmark">✗</span></td>
+                            <td><span class="crossmark">✗</span></td>
+                        </tr>
+                        <tr>
+                            <td>Despliegue automático</td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="checkmark">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Siempre activo</td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="crossmark">✗</span></td>
+                            <td><span class="crossmark">✗</span></td>
+                        </tr>
+                        <tr>
+                            <td>Velocidad</td>
+                            <td>Rápido</td>
+                            <td>Lento (30-60s)</td>
+                            <td>Medio</td>
+                        </tr>
+                        <tr>
+                            <td>Para producción</td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="checkmark">✓</span></td>
+                            <td><span class="crossmark">✗</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recomendación -->
+            <div class="success" style="margin: 40px 0;">
+                <h3 style="margin-bottom: 15px;">🎯 Mi Recomendación</h3>
+                <p><strong>Para empezar:</strong> Usa <strong>Railway</strong> si tienes tarjeta de crédito (no te cobrará con el plan gratuito).</p>
+                <p><strong>Sin tarjeta:</strong> Usa <strong>Render</strong> (gratis 100%, aunque es más lento).</p>
+                <p><strong>Solo para probar:</strong> Usa <strong>Replit</strong> (más rápido de configurar).</p>
+            </div>
+
+            <!-- Obtener API Key -->
+            <div class="platform">
+                <h2>🔑 Obtener API Key de Anthropic</h2>
+
+                <div class="steps">
+                    <div class="step">
+                        <strong>Paso 1:</strong> Ve a Anthropic Console
+                        <div style="margin-top: 10px;">
+                            <a href="https://console.anthropic.com/" target="_blank" class="button">🔑 Ir a Anthropic</a>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 2:</strong> Regístrate o inicia sesión
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 3:</strong> Ve a "API Keys" en el menú
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 4:</strong> Clic en "Create Key"
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 5:</strong> Copia la clave generada (empieza con <code>sk-ant-...</code>)
+                    </div>
+
+                    <div class="step">
+                        <strong>Paso 6:</strong> Pégala en las variables de entorno de la plataforma que elijas
+                    </div>
+                </div>
+
+                <div class="info">
+                    <strong>💰 Pricing:</strong> Anthropic ofrece $5 de crédito gratis. Después pagas por uso (~$0.003 por cada conversión).
+                </div>
+            </div>
+
+            <!-- Enlaces útiles -->
+            <div style="text-align: center; margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 12px;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🔗 Enlaces Útiles</h3>
+                <div style="margin-top: 20px;">
+                    <a href="https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n" target="_blank" class="button">📁 Tu Repositorio en GitHub</a>
+                    <a href="https://railway.app/" target="_blank" class="button">🚂 Railway</a>
+                    <a href="https://render.com/" target="_blank" class="button secondary">🎨 Render</a>
+                    <a href="https://replit.com/" target="_blank" class="button secondary">⚡ Replit</a>
+                    <a href="https://console.anthropic.com/" target="_blank" class="button secondary">🔑 Anthropic</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Budget Converter v1.0</strong></p>
+            <p style="margin-top: 10px; opacity: 0.8;">¿Necesitas ayuda? Abre un issue en GitHub</p>
+        </div>
+    </div>
+</body>
+</html>
