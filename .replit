@@ -1,0 +1,14 @@
+# Replit configuration
+run = "cd backend && python -m app.main"
+language = "python3"
+
+[nix]
+channel = "stable-23_11"
+
+[deployment]
+run = ["sh", "-c", "cd backend && python -m app.main"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8000
+externalPort = 80

@@ -1,7 +1,19 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-const API_BASE_URL = '/api'
+// Detectar URL del backend automáticamente
+const getApiBaseUrl = () => {
+  // Si estamos en desarrollo local, usar proxy
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return '/api'
+  }
+  // En producción (Replit, Railway, etc.), el backend está en el mismo host
+  return window.location.origin
+}
+
+const API_BASE_URL = getApiBaseUrl()
+
+console.log('API URL configurada:', API_BASE_URL)
 
 function FileConverter() {
   const [file, setFile] = useState(null)
