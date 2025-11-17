@@ -57,5 +57,9 @@ temp/
 *.bc3
 *.pdf
 
+# Allow example files
+!examples/*.bc3
+!examples/*.pdf
+
 # Test files
 test_output/

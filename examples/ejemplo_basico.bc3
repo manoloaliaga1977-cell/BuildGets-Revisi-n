@@ -1,0 +1,15 @@
+V|FIEBDC-3/2004|~
+K|1|Presupuesto de Obra Ejemplo|~
+K|2|Constructora Ejemplo S.L.|~
+K|3|15/01/2025|~
+K|4|EUR|~
+D|##|CAP01\1\\\CAP02\1\\\|~
+C|CAP01||DEMOLICIONES Y MOVIMIENTO DE TIERRAS|53250,00||0|~
+D|CAP01|DEM001\50.00\\\EXC001\200.00\\\|~
+C|DEM001|m2|Demolición de solera de hormigón, con martillo neumático|15,50||1|~
+C|EXC001|m3|Excavación de tierras con retroexcavadora|25,00||1|~
+C|CAP02||CIMENTACIÓN|85600,00||0|~
+D|CAP02|ZAP001\12.00\\\ARM001\2500.00\\\HOR001\80.00\\\|~
+C|ZAP001|ud|Zapata de hormigón armado 150x150x60 cm|350,00||1|~
+C|ARM001|kg|Acero corrugado B 500 S en armaduras|1,25||1|~
+C|HOR001|m3|Hormigón HA-25/P/20/IIa vertido con cubilote|95,00||1|~
