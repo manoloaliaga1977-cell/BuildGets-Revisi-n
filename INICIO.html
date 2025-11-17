@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Converter - Guía de Instalación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .step h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .warning {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .warning strong {
+            color: #c53030;
+        }
+
+        .success {
+            background: #f0fff4;
+            border-left: 4px solid #68d391;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .success strong {
+            color: #2f855a;
+        }
+
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px 10px 10px 0;
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .os-selector {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .os-button {
+            flex: 1;
+            min-width: 150px;
+            padding: 20px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .os-button:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .os-button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .os-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            display: none;
+        }
+
+        .instructions.active {
+            display: block;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .links {
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #68d391;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Budget Converter</h1>
+            <p>Conversión de presupuestos BC3 y PDF con IA</p>
+        </div>
+
+        <div class="content">
+            <h2 style="text-align: center; margin-bottom: 30px;">Selecciona tu Sistema Operativo</h2>
+
+            <div class="os-selector">
+                <div class="os-button" onclick="showInstructions('windows')">
+                    <div class="os-icon">🪟</div>
+                    <strong>Windows</strong>
+                </div>
+                <div class="os-button" onclick="showInstructions('mac')">
+                    <div class="os-icon">🍎</div>
+                    <strong>macOS</strong>
+                </div>
+                <div class="os-button" onclick="showInstructions('linux')">
+                    <div class="os-icon">🐧</div>
+                    <strong>Linux</strong>
+                </div>
+            </div>
+
+            <!-- Instrucciones Windows -->
+            <div id="windows-instructions" class="instructions">
+                <div class="step">
+                    <h2><span class="step-number">1</span> Requisitos Previos</h2>
+                    <p>Antes de empezar, asegúrate de tener instalado:</p>
+                    <ul>
+                        <li><strong>Python 3.9+</strong> - <a href="https://www.python.org/downloads/" target="_blank">Descargar</a></li>
+                        <li><strong>Node.js 18+</strong> - <a href="https://nodejs.org/" target="_blank">Descargar</a></li>
+                    </ul>
+                    <div class="warning">
+                        <strong>⚠️ Importante:</strong> Al instalar Python, marca la casilla "Add Python to PATH"
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">2</span> Descargar el Proyecto</h2>
+                    <p>Descarga el proyecto desde GitHub:</p>
+                    <a href="https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n/archive/refs/heads/claude/budget-import-export-app-018MrqiAfdsFifaz42UUDLVR.zip" class="button">📦 Descargar ZIP</a>
+                    <p style="margin-top: 10px;">Descomprime el archivo en tu carpeta deseada.</p>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">3</span> Instalar Dependencias</h2>
+                    <p>Haz <strong>doble clic</strong> en el archivo:</p>
+                    <div class="code">INSTALAR.bat</div>
+                    <p>Esto instalará automáticamente todas las dependencias necesarias.</p>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">4</span> Configurar API Key</h2>
+                    <p>Abre el archivo <code>backend\.env</code> con el Bloc de notas y añade tu clave de API:</p>
+                    <div class="code">ANTHROPIC_API_KEY=tu_clave_aqui</div>
+                    <p>Obtén tu API key en: <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a></p>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">5</span> ¡Ejecutar la Aplicación!</h2>
+                    <p>Haz <strong>doble clic</strong> en el archivo:</p>
+                    <div class="code">EJECUTAR.bat</div>
+                    <div class="success">
+                        <strong>✅ ¡Listo!</strong> La aplicación se abrirá automáticamente en tu navegador en:
+                        <div class="code" style="margin-top: 10px;">http://localhost:3000</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instrucciones Mac/Linux -->
+            <div id="mac-instructions" class="instructions">
+                <div class="step">
+                    <h2><span class="step-number">1</span> Requisitos Previos</h2>
+                    <p>Antes de empezar, asegúrate de tener instalado:</p>
+                    <ul>
+                        <li><strong>Python 3.9+</strong> - <a href="https://www.python.org/downloads/" target="_blank">Descargar</a></li>
+                        <li><strong>Node.js 18+</strong> - <a href="https://nodejs.org/" target="_blank">Descargar</a></li>
+                    </ul>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">2</span> Descargar el Proyecto</h2>
+                    <p>Descarga el proyecto desde GitHub:</p>
+                    <a href="https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n/archive/refs/heads/claude/budget-import-export-app-018MrqiAfdsFifaz42UUDLVR.zip" class="button">📦 Descargar ZIP</a>
+                    <p style="margin-top: 10px;">Descomprime el archivo en tu carpeta deseada.</p>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">3</span> Dar Permisos de Ejecución</h2>
+                    <p>Abre Terminal, navega a la carpeta del proyecto y ejecuta:</p>
+                    <div class="code">chmod +x INSTALAR.sh EJECUTAR.sh</div>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">4</span> Instalar Dependencias</h2>
+                    <p>Ejecuta el instalador:</p>
+                    <div class="code">./INSTALAR.sh</div>
+                    <p>O haz <strong>doble clic</strong> en <code>INSTALAR.sh</code></p>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">5</span> Configurar API Key</h2>
+                    <p>Edita el archivo <code>backend/.env</code> y añade tu clave de API:</p>
+                    <div class="code">ANTHROPIC_API_KEY=tu_clave_aqui</div>
+                    <p>Obtén tu API key en: <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a></p>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">6</span> ¡Ejecutar la Aplicación!</h2>
+                    <p>Ejecuta:</p>
+                    <div class="code">./EJECUTAR.sh</div>
+                    <p>O haz <strong>doble clic</strong> en <code>EJECUTAR.sh</code></p>
+                    <div class="success">
+                        <strong>✅ ¡Listo!</strong> La aplicación se abrirá automáticamente en tu navegador en:
+                        <div class="code" style="margin-top: 10px;">http://localhost:3000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="linux-instructions" class="instructions">
+                <!-- Same as Mac -->
+                <div class="step">
+                    <h2><span class="step-number">1</span> Requisitos Previos</h2>
+                    <p>Asegúrate de tener instalado:</p>
+                    <ul>
+                        <li><strong>Python 3.9+</strong></li>
+                        <li><strong>Node.js 18+</strong></li>
+                    </ul>
+                    <p>Instala con tu gestor de paquetes:</p>
+                    <div class="code">
+                        # Ubuntu/Debian<br>
+                        sudo apt install python3 python3-pip nodejs npm
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">2</span> Descargar el Proyecto</h2>
+                    <a href="https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n/archive/refs/heads/claude/budget-import-export-app-018MrqiAfdsFifaz42UUDLVR.zip" class="button">📦 Descargar ZIP</a>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">3</span> Dar Permisos</h2>
+                    <div class="code">chmod +x INSTALAR.sh EJECUTAR.sh</div>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">4</span> Instalar</h2>
+                    <div class="code">./INSTALAR.sh</div>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">5</span> Configurar API Key</h2>
+                    <div class="code">nano backend/.env</div>
+                    <p>Añade: <code>ANTHROPIC_API_KEY=tu_clave_aqui</code></p>
+                </div>
+
+                <div class="step">
+                    <h2><span class="step-number">6</span> Ejecutar</h2>
+                    <div class="code">./EJECUTAR.sh</div>
+                    <div class="success">
+                        <strong>✅ ¡Listo!</strong> Abre tu navegador en:
+                        <div class="code" style="margin-top: 10px;">http://localhost:3000</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 12px;">
+                <h3 style="color: #667eea; margin-bottom: 15px;">🎯 ¿Necesitas Ayuda?</h3>
+                <p>Consulta la documentación completa o reporta problemas</p>
+                <div style="margin-top: 20px;">
+                    <a href="https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n" class="button">📚 Ver Documentación</a>
+                    <a href="https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n/issues" class="button">🐛 Reportar Problema</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Budget Converter v1.0</strong></p>
+            <p style="margin-top: 10px; opacity: 0.8;">Conversión de presupuestos BC3 y PDF con Inteligencia Artificial</p>
+            <div class="links">
+                <a href="https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n">GitHub</a>
+                <a href="http://localhost:8000/docs">API Docs</a>
+                <a href="https://console.anthropic.com/">Anthropic API</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showInstructions(os) {
+            // Ocultar todas las instrucciones
+            document.querySelectorAll('.instructions').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Desactivar todos los botones
+            document.querySelectorAll('.os-button').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Mostrar instrucciones seleccionadas
+            if (os === 'mac' || os === 'linux') {
+                document.getElementById('mac-instructions').classList.add('active');
+            } else {
+                document.getElementById(os + '-instructions').classList.add('active');
+            }
+
+            // Activar botón seleccionado
+            event.target.closest('.os-button').classList.add('active');
+
+            // Scroll suave a las instrucciones
+            setTimeout(() => {
+                document.querySelector('.instructions.active').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
