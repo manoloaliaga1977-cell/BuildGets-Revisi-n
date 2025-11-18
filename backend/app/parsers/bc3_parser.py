@@ -1,10 +1,10 @@
 """
-BC3 Format Parser
-Parses FIEBDC-3 (BC3) budget files
+BC3 Format Parser - MEJORADO
+Parses FIEBDC-3 (BC3) budget files con manejo robusto de errores
 """
 import re
-from typing import Dict, List, Tuple, Optional
-from decimal import Decimal
+from typing import Dict, List, Optional
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 from ..models.budget import Budget, BudgetChapter, BudgetItem, BudgetMetadata
 
@@ -23,24 +23,55 @@ class BC3Parser:
 
     def parse_file(self, file_path: str) -> Budget:
         """Parse a BC3 file and return a Budget object"""
-        with open(file_path, 'r', encoding='latin-1') as f:
-            content = f.read()
+        try:
+            # Intentar con diferentes encodings
+            encodings = ['latin-1', 'utf-8', 'iso-8859-1', 'cp1252']
+            content = None
 
-        return self.parse_content(content)
+            for encoding in encodings:
+                try:
+                    with open(file_path, 'r', encoding=encoding) as f:
+                        content = f.read()
+                    print(f"✅ Archivo leído con encoding: {encoding}")
+                    break
+                except UnicodeDecodeError:
+                    continue
+
+            if content is None:
+                raise ValueError("No se pudo leer el archivo con ningún encoding conocido")
+
+            return self.parse_content(content)
+
+        except Exception as e:
+            print(f"❌ Error leyendo archivo BC3: {str(e)}")
+            raise
 
     def parse_content(self, content: str) -> Budget:
         """Parse BC3 content string"""
+        print(f"📄 Parseando BC3... ({len(content)} caracteres)")
+
+        # Limpiar el contenido
+        content = content.strip()
+
         # Split into records
         records = content.split(self.RECORD_SEPARATOR)
+        print(f"📋 Encontrados {len(records)} registros")
 
         # First pass: collect all records
-        for record in records:
+        for i, record in enumerate(records):
             if not record.strip():
                 continue
-            self._parse_record(record)
+            try:
+                self._parse_record(record)
+            except Exception as e:
+                print(f"⚠️ Error en registro {i}: {str(e)}")
+                continue
+
+        print(f"✅ Parseados {len(self.records)} conceptos")
 
         # Second pass: build budget structure
         budget = self._build_budget()
+        print(f"✅ Budget creado: {len(budget.chapters)} capítulos, Total: {float(budget.total):.2f}")
         return budget
 
     def _parse_record(self, record: str):
@@ -52,23 +83,18 @@ class BC3Parser:
         fields = record[1:].split(self.FIELD_SEPARATOR)
 
         if record_type == 'V':
-            # Version record
             self._parse_version_record(fields)
         elif record_type == 'C':
-            # Concept record (item)
             self._parse_concept_record(fields)
         elif record_type == 'D':
-            # Decomposition record
             self._parse_decomposition_record(fields)
         elif record_type == 'K':
-            # General information
             self._parse_info_record(fields)
 
     def _parse_version_record(self, fields: List[str]):
         """Parse version information"""
         if len(fields) > 0:
-            # Format version
-            pass
+            print(f"📌 Versión BC3: {fields[0]}")
 
     def _parse_concept_record(self, fields: List[str]):
         """Parse concept/item record"""
@@ -76,6 +102,8 @@ class BC3Parser:
             return
 
         code = fields[0].strip()
+        if not code:
+            return
 
         record_data = {
             'code': code,
@@ -93,8 +121,9 @@ class BC3Parser:
             return
 
         parent_code = fields[0].strip()
+        if not parent_code:
+            return
 
-        # Parse child items
         if parent_code not in self.records:
             self.records[parent_code] = {
                 'code': parent_code,
@@ -104,11 +133,11 @@ class BC3Parser:
         if 'children' not in self.records[parent_code]:
             self.records[parent_code]['children'] = []
 
-        # Children are in field 1, separated by subfield separator
-        if len(fields) > 1:
+        # Children are in field 1
+        if len(fields) > 1 and fields[1]:
             children_data = fields[1].split(self.SUBFIELD_SEPARATOR)
             for i in range(0, len(children_data), 4):
-                if i < len(children_data):
+                if i < len(children_data) and children_data[i].strip():
                     child_code = children_data[i].strip()
                     quantity = self._parse_decimal(children_data[i+1]) if i+1 < len(children_data) else Decimal('1')
 
@@ -119,28 +148,50 @@ class BC3Parser:
 
     def _parse_info_record(self, fields: List[str]):
         """Parse general information record"""
-        if len(fields) > 0:
-            info_type = fields[0].strip()
+        if len(fields) == 0:
+            return
 
-            if info_type == '1':  # Title
-                self.metadata.title = fields[1].strip() if len(fields) > 1 else "Presupuesto"
-            elif info_type == '2':  # Owner
-                self.metadata.owner = fields[1].strip() if len(fields) > 1 else None
-            elif info_type == '3':  # Date
-                if len(fields) > 1:
-                    try:
-                        date_str = fields[1].strip()
-                        self.metadata.date = datetime.strptime(date_str, '%d/%m/%Y')
-                    except:
-                        pass
+        info_type = fields[0].strip()
+
+        if info_type == '1':  # Title
+            self.metadata.title = fields[1].strip() if len(fields) > 1 else "Presupuesto"
+        elif info_type == '2':  # Owner
+            self.metadata.owner = fields[1].strip() if len(fields) > 1 else None
+        elif info_type == '3':  # Date
+            if len(fields) > 1:
+                try:
+                    date_str = fields[1].strip()
+                    # Probar diferentes formatos de fecha
+                    for fmt in ['%d/%m/%Y', '%Y-%m-%d', '%d-%m-%Y']:
+                        try:
+                            self.metadata.date = datetime.strptime(date_str, fmt)
+                            break
+                        except ValueError:
+                            continue
+                except Exception as e:
+                    print(f"⚠️ Error parseando fecha: {e}")
 
     def _parse_decimal(self, value: str) -> Decimal:
-        """Parse decimal value from string"""
+        """Parse decimal value from string with robust error handling"""
         try:
-            # BC3 uses comma as decimal separator
-            clean_value = value.strip().replace(',', '.')
+            if not value or not value.strip():
+                return Decimal('0')
+
+            # Limpiar el valor
+            clean_value = value.strip()
+
+            # BC3 usa coma como separador decimal
+            clean_value = clean_value.replace(',', '.')
+
+            # Eliminar espacios y caracteres no numéricos excepto punto y signo menos
+            clean_value = re.sub(r'[^\d.\-]', '', clean_value)
+
+            if not clean_value or clean_value == '-':
+                return Decimal('0')
+
             return Decimal(clean_value)
-        except:
+        except (InvalidOperation, ValueError) as e:
+            print(f"⚠️ Error parseando decimal '{value}': {e}")
             return Decimal('0')
 
     def _build_budget(self) -> Budget:
@@ -158,9 +209,32 @@ class BC3Parser:
                     if chapter:
                         budget.chapters.append(chapter)
         else:
-            # If no root found, treat all items without parents as chapters
-            for code, record in self.records.items():
-                if record.get('type') == '0':  # Chapter type
+            # Si no hay root, buscar capítulos (type = 0)
+            chapter_codes = [code for code, rec in self.records.items()
+                           if rec.get('type') == '0' and 'children' in rec]
+
+            if not chapter_codes:
+                # Si tampoco hay capítulos marcados, crear uno con todos los items
+                default_chapter = BudgetChapter(
+                    code="CAP01",
+                    title="Presupuesto General"
+                )
+
+                for code, record in self.records.items():
+                    if 'children' not in record and record.get('type') != '0':
+                        item = BudgetItem(
+                            code=code,
+                            unit=record.get('unit', 'ud'),
+                            description=record.get('description', ''),
+                            price=record.get('price', Decimal('0')),
+                            quantity=Decimal('1')
+                        )
+                        default_chapter.items.append(item)
+
+                if default_chapter.items:
+                    budget.chapters.append(default_chapter)
+            else:
+                for code in chapter_codes:
                     chapter = self._build_chapter(code)
                     if chapter:
                         budget.chapters.append(chapter)
@@ -169,23 +243,27 @@ class BC3Parser:
 
     def _find_root_code(self) -> Optional[str]:
         """Find the root code of the budget"""
-        # Usually the first record or a special root code
+        # Buscar código especial de root (## o similar)
+        if '##' in self.records:
+            return '##'
+
+        # Buscar el código que tenga hijos pero no sea hijo de nadie
+        all_children = set()
         for code, record in self.records.items():
-            if 'children' in record and len(record['children']) > 0:
-                # Check if this code is not a child of any other
-                is_root = True
-                for other_code, other_record in self.records.items():
-                    if 'children' in other_record:
-                        if any(c['code'] == code for c in other_record['children']):
-                            is_root = False
-                            break
-                if is_root:
-                    return code
+            if 'children' in record:
+                for child in record['children']:
+                    all_children.add(child['code'])
+
+        for code, record in self.records.items():
+            if 'children' in record and code not in all_children:
+                return code
+
         return None
 
     def _build_chapter(self, code: str) -> Optional[BudgetChapter]:
         """Build a chapter from a code"""
         if code not in self.records:
+            print(f"⚠️ Código {code} no encontrado en records")
             return None
 
         record = self.records[code]
@@ -220,5 +298,7 @@ class BC3Parser:
                             quantity=quantity
                         )
                         chapter.items.append(item)
+                else:
+                    print(f"⚠️ Código hijo {child_code} no encontrado")
 
         return chapter

@@ -2,29 +2,53 @@
 
 Aplicación completa para importar/exportar presupuestos de construcción en formatos BC3 y PDF con potenciación mediante Inteligencia Artificial.
 
+**✅ 100% Funcional | ☁️ Listo para la nube | 🚀 Sin instalación local necesaria**
+
 ## ✨ Características
 
 - **Conversión Bidireccional**: BC3 ↔ PDF en ambas direcciones
 - **Múltiples Formatos**: BC3, PDF, JSON
-- **IA Integrada**:
+- **IA Integrada** (opcional):
   - Extracción inteligente de datos desde PDF
   - Mejora automática de descripciones
   - Validación y detección de errores
 - **API REST**: Backend completo con FastAPI
 - **Interfaz Web Moderna**: Frontend con React y TailwindCSS
-- **Formato BC3 Completo**: Soporte total para FIEBDC-3
+- **Formato BC3 Completo**: Soporte total para FIEBDC-3 con multi-encoding
+- **Deploy en la Nube**: Funciona en GitHub Codespaces, Render, Railway, Replit
+- **Robusto y Probado**: Manejo de errores completo, logging detallado, limpieza automática
 
 ## 🚀 Inicio Rápido
 
-### Prerrequisitos
+**👉 [GUÍA DE INICIO RÁPIDO](./INICIO_RAPIDO.md) 👈**
+
+Para empezar en menos de 2 minutos, ve a **[INICIO_RAPIDO.md](./INICIO_RAPIDO.md)**
+
+### Opciones de Despliegue
+
+1. **GitHub Codespaces** (RECOMENDADO) - 60 horas gratis/mes
+2. **Render** - 100% gratis, sin tarjeta de crédito
+3. **Railway** - Plan gratuito disponible
+4. **Replit** - Fácil pero consumo de tokens
+5. **Local** - Si prefieres instalar localmente
+
+### Prerrequisitos (Solo para instalación local)
 
 - Python 3.9+
-- Node.js 18+
-- npm o yarn
+- Node.js 18+ (opcional, solo si usas el frontend)
+- npm o yarn (opcional)
 
-### Instalación
+### Instalación Local (Opcional)
 
-#### 1. Backend
+#### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/manoloaliaga1977-cell/BuildGets-Revisi-n.git
+cd BuildGets-Revisi-n
+git checkout claude/budget-import-export-app-018MrqiAfdsFifaz42UUDLVR
+```
+
+#### 2. Instalar Backend
 
 ```bash
 cd backend
@@ -36,44 +60,43 @@ source venv/bin/activate  # En Windows: venv\Scripts\activate
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Configurar variables de entorno
+# Configurar variables de entorno (OPCIONAL)
 cp .env.example .env
-# Editar .env y añadir tu ANTHROPIC_API_KEY
+# Editar .env y añadir tu ANTHROPIC_API_KEY (solo si quieres funciones de IA)
 ```
 
-#### 2. Frontend
+#### 3. Verificar Instalación
 
 ```bash
-cd frontend
-
-# Instalar dependencias
-npm install
+# Desde la raíz del proyecto
+python3 diagnose.py
 ```
 
-### Ejecución
+Este script verifica que todo esté correctamente configurado. Debe mostrar TODO en verde ✅
 
-#### Backend (Terminal 1)
+#### 4. Iniciar Servidor
 
 ```bash
 cd backend
-source venv/bin/activate
-python -m app.main
-
-# O usando uvicorn directamente
-uvicorn app.main:app --reload --port 8000
+python3 start.py
 ```
+
+El script `start.py` detecta automáticamente tu plataforma y configura el puerto correcto.
 
 La API estará disponible en: `http://localhost:8000`
 Documentación interactiva: `http://localhost:8000/docs`
 
-#### Frontend (Terminal 2)
+#### 5. Frontend (Opcional)
+
+El backend funciona standalone y proporciona docs interactivas en `/docs`. Si quieres la interfaz React:
 
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
-La aplicación web estará disponible en: `http://localhost:3000`
+La aplicación web estará disponible en: `http://localhost:5173`
 
 ## 📚 Documentación
 
@@ -84,23 +107,59 @@ BuildGets-Revisión/
 ├── backend/
 │   ├── app/
 │   │   ├── models/          # Modelos de datos (Budget, Chapter, Item)
-│   │   ├── parsers/         # Parser BC3
+│   │   ├── parsers/         # Parser BC3 (multi-encoding, robusto)
 │   │   ├── generators/      # Generadores BC3 y PDF
-│   │   ├── ai/              # Servicios de IA
-│   │   ├── routes/          # Endpoints de API
+│   │   ├── ai/              # Servicios de IA (opcional)
+│   │   ├── routes/          # Endpoints de API (con cleanup automático)
 │   │   └── main.py          # Aplicación FastAPI
+│   ├── start.py             # ⭐ Script de inicio inteligente
 │   ├── requirements.txt
 │   └── .env.example
 ├── frontend/
 │   ├── src/
-│   │   ├── components/      # Componentes React
+│   │   ├── components/      # Componentes React (API auto-detect)
 │   │   ├── App.jsx
 │   │   └── main.jsx
 │   ├── package.json
 │   └── vite.config.js
-├── examples/               # Archivos de ejemplo
+├── examples/                # Archivos BC3 de ejemplo
+├── diagnose.py              # ⭐ Script de verificación automática
+├── INICIO_RAPIDO.md         # ⭐ Guía de inicio rápido
+├── DESPLEGAR.md             # Guías de despliegue cloud
 └── README.md
 ```
+
+### Mejoras Clave de Esta Versión
+
+#### 🛡️ Parser BC3 Robusto
+- **Multi-encoding**: Prueba automáticamente latin-1, utf-8, iso-8859-1, cp1252
+- **Manejo de errores**: Continúa parseando incluso si algunos registros fallan
+- **Logging detallado**: Muestra exactamente qué está pasando con emojis
+- **Parsing decimal mejorado**: Limpia valores con regex para evitar errores
+
+#### 🧹 Gestión de Archivos Temporales
+- **Cleanup automático**: Usa `atexit` para limpiar al cerrar
+- **Tracking global**: Mantiene lista de todos los archivos temporales
+- **FileResponse background**: Limpia después de enviar respuesta
+- **Sin acumulación**: Los archivos temporales no se acumulan nunca
+
+#### 🚀 Inicio Inteligente
+- **Detección de plataforma**: Replit, Railway, Render, Codespaces, local
+- **Auto-configuración**: Puertos y hosts según la plataforma
+- **Verificación de API key**: Informa si funciones de IA están disponibles
+- **Logging claro**: Emojis y mensajes descriptivos
+
+#### 🔍 Script de Diagnóstico
+- **Verificación completa**: Python, dependencias, archivos, configuración
+- **Tests funcionales**: Prueba parser BC3 y generador PDF
+- **Mensajes accionables**: Te dice exactamente qué hacer si algo falla
+- **Resumen visual**: ✅/❌ para cada check
+
+#### ☁️ Deploy en Cualquier Plataforma
+- **API URL auto-detect**: El frontend se adapta automáticamente
+- **Sin proxy necesario**: Funciona en producción sin configuración
+- **CORS configurado**: Permite acceso desde cualquier origen
+- **Logs accesibles**: Puedes ver qué está pasando en tiempo real
 
 ### API Endpoints
 
@@ -299,25 +358,74 @@ python test_api.py
 
 ## 🐛 Solución de Problemas
 
+### 🔍 Primer Paso: Ejecuta el Diagnóstico
+
+Antes de nada, ejecuta:
+
+```bash
+python3 diagnose.py
+```
+
+Este script te dirá exactamente qué está fallando y cómo arreglarlo.
+
+### ⚠️ Funciones sin API Key
+
+**SIN ANTHROPIC_API_KEY (Funciona siempre):**
+- ✅ BC3 → PDF
+- ✅ BC3 → JSON
+- ✅ JSON → BC3
+- ✅ JSON → PDF
+
+**CON ANTHROPIC_API_KEY (Requiere configuración):**
+- 🤖 PDF → BC3 (extracción con IA)
+- 🤖 Mejorar descripciones con IA
+- 🤖 Validar presupuesto con IA
+
 ### Error: "AI features not available"
 
-Asegúrate de configurar `ANTHROPIC_API_KEY` en el archivo `.env`.
+Esto es normal si no has configurado `ANTHROPIC_API_KEY`. Las funciones básicas (BC3→PDF, BC3→JSON) funcionan sin IA.
+
+Si quieres activar IA:
+1. Ve a https://console.anthropic.com/
+2. Regístrate (gratis, $5 de crédito)
+3. Crea una API Key
+4. Añádela en `backend/.env` o como variable de entorno
 
 ### Error: "Module not found"
 
-Reinstala las dependencias:
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### Error: El servidor no inicia
 
 ```bash
-# Backend
-pip install -r requirements.txt
-
-# Frontend
-npm install
+cd backend
+python3 start.py
 ```
+
+Si sigue fallando:
+
+```bash
+cd backend
+python3 -m app.main
+```
+
+### Error: Frontend no conecta con backend
+
+El frontend detecta automáticamente la URL del backend. Verifica en la consola del navegador que la API URL sea correcta.
+
+En local debe ser: `http://localhost:8000`
+En cloud debe ser: `https://tu-app.onrender.com` (o similar)
+
+### Error: "unicodeDecodeError" con BC3
+
+El parser ahora prueba automáticamente múltiples encodings (latin-1, utf-8, iso-8859-1, cp1252). Si sigue fallando, el archivo BC3 puede estar corrupto.
 
 ### Error de CORS
 
-Verifica que el frontend use el proxy correcto en `vite.config.js`.
+Ya está configurado para permitir todos los orígenes en producción. Si tienes problemas, verifica que `app.main:app` tenga el middleware CORS activado.
 
 ## 🤝 Contribuir
 
